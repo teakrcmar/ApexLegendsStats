@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="css/stylePie.css">
+  <link rel="stylesheet" href="css/styleBar.css">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <title>Apex Legends</title>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="title row">
+            <h1>Apex Legends Ranked Overview</h1>
+        </div>
+        <div class="row2">
+            All the data collected count only the ranked games and only players who are not in the new Rookie category or are unranked.
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <svg class="pieChart" width="460" height="320"></svg>
+            </div>
+            <div class="col-md-6">
+              <div class="row2"><div class="rankText"></div></div>
+              <div class="divPie row"><svg class="divPieChart" width="200" height="200"></svg></div>
+            </div>
+        </div>
+
+        <div class="row2">
+            Looking at the ranked plays in the last few ranked seasons we can see the most popular characters which pros love to use. Seeing their skills we can tell that the pros love mobility of a character the most, since it gives the opportunity for an easy escape and fast engaging of enemies.
+        </div>
+
+        <div class="row">
+          <div class="col-md-4">
+            <section class="chart-container">
+              <svg class="barChart" width="460" height="320"></svg>
+            </section>
+          </div>
+          <div class="col-md-2">
+          </div>
+          <div class="col-md-6">
+            <div class="row"><br><br><br><br></div>
+            <div class="row2"><div class="charText"></div></div>
+          </div>
+        </div>
+</body>
+<script>
+
+var currentDivPieData;
+
+var bronzeData = [{
+    rank: "Division IV",
+    percentage: 48.53,
+    color: "#ba917d"
+  },{
+    rank: "Division III",
+    percentage: 20.20,
+    color: "#ba917d"
+  },{
+    rank: "Division II",
+    percentage: 17.99,
+    color: "#ba917d"
+  },{
+    rank: "Division I",
+    percentage: 13.28,
+    color: "#ba917d"
+  },];
+
+var silverData = [{
+    rank: "Division IV",
+    percentage: 32.82,
+    color: "#d5d3e1"
+  },{
+    rank: "Division III",
+    percentage: 23.23,
+    color: "#d5d3e1"
+  },{
+    rank: "Division II",
+    percentage: 26.38,
+    color: "#d5d3e1"
+  },{
+    rank: "Division I",
+    percentage: 17.57,
+    color: "#d5d3e1"
+  },];
+  
+var goldData = [{
+    rank: "Division IV",
+    percentage: 38.37,
+    color: "#fad699"
+  },{
+    rank: "Division III",
+    percentage: 24.15,
+    color: "#fad699"
+  },{
+    rank: "Division II",
+    percentage: 22.95,
+    color: "#fad699"
+  },{
+    rank: "Division I",
+    percentage: 14.53,
+    color: "#fad699"
+  },];
+
+var platinumData = [{
+    rank: "Division IV",
+    percentage: 60.72,
+    color: "#6cfbfc"
+  },{
+    rank: "Division III",
+    percentage: 19.86,
+    color: "#6cfbfc"
+  },{
+    rank: "Division II",
+    percentage: 12.68,
+    color: "#6cfbfc"
+  },{
+    rank: "Division I",
+    percentage: 6.74,
+    color: "#6cfbfc"
+  },];
+
+var diamondData = [{
+    rank: "Division IV",
+    percentage: 86.89,
+    color: "#2ab1ec"
+  },{
+    rank: "Division III",
+    percentage: 7.44,
+    color: "#2ab1ec"
+  },{
+    rank: "Division II",
+    percentage: 3.47,
+    color: "#2ab1ec"
+  },{
+    rank: "Division I",
+    percentage: 2.20,
+    color: "#2ab1ec"
+  },];
+
+//pie chart code
+var pieSvg = d3.selectAll(".pieChart")
+    width = +pieSvg.attr("width"),
+    height = +pieSvg.attr("height"),
+    radius = Math.min(width, height) / 2,
+    g = pieSvg.append("g").attr("transform", "translate(" + width / 1.95 + "," + height / 1.95 + ") rotate(" + 60 + ")")
+
+var pieData = [{
+    rank: "Bronze",
+    percentage: 20.4,
+    color: "#ba917d",
+    text:"Bronze tier is devided into four divisions. To leave each division a player needs to collect 500 RP per division. The entry costs go from 15 to 24, in increments of 3."
+  },{
+    rank: "Silver",
+    percentage: 14.29,
+    color: "#d5d3e1",
+    text:"Silver tier is devided into four divisions. To leave each division a player needs to collect 600 RP per division. The entry costs go from 27 to 36, in increments of 3."
+  },{
+    rank: "Gold",
+    percentage: 20.17,
+    color: "#fad699",
+    text:"Gold tier is devided into four divisions. To leave each division a player needs to collect 700 RP per division. The entry costs go from 39 to 48, in increments of 3."
+  },{
+    rank: "Platinum",
+    percentage: 24.92,
+    color: "#6cfbfc",
+    text:"Platinum tier is devided into four divisions. To leave each division a player needs to collect 700 RP per division. The entry costs go from 51 to 60, in increments of 3."
+  },{
+    rank: "Diamond",
+    percentage: 15.87,
+    color: "#2ab1ec",
+    text:"Diamond tier is devided into four divisions. To leave each division a player needs to collect 700 RP per division. The entry costs go from 63 to 72, in increments of 3."
+  },{
+    rank: "Master",
+    percentage: 4.13,
+    color: "#c97df2",
+    text:"Master tier requires a minimum of 15000 RP and the starts at 75 while it increases by 5 for every 1000 RP collected, up to a cost of 175."
+  },{
+    rank: "Predator",
+    percentage: 0.24,
+    color: "#f64a41",
+    text: "Predator tier has only the top 750 players and the entry cost starts at 75 while it increases by 5 for every 1000 RP collected, up to a cost of 175."
+  }];
+
+var pie = d3.pie()
+    .sort(null)
+    .value(function(d) { return d.percentage; });
+
+var path = d3.arc()
+    .outerRadius(radius - 10)
+    .innerRadius(radius - 90);
+
+var label = d3.arc()
+    .outerRadius(radius - 40)
+    .innerRadius(radius - 40);
+
+var arc = g.selectAll(".arc")
+    .data(pie(pieData))
+    .enter().append("g")
+      .attr("class", "arc");
+
+var percentageText = d3.selectAll(".pieChart").append("text")
+        .text("0%")
+        .attr("x", radius + 45)
+        .attr("y", radius + 10)
+        .style("visibility", "hidden");
+
+var rankText = d3.select('.rankText');
+rankText.text("Bronze tier is devided into four divisions. To leave each division a player needs to collect 500 RP per division. The entry costs go from 15 to 24, in increments of 3.");
+
+var divPieData = bronzeData;
+
+arc.append("path")
+    .attr("d", path)
+    .attr("fill", function(d) { return d.data.color; })    
+    .on("mouseover", function(d){      
+      var name = this.parentNode.lastChild.innerHTML; 
+      var text;
+      console.log(pieData)
+      pieData.forEach(element => {
+              if(name === element['rank']){
+                text = element['percentage'] + "%"
+              }
+            });
+      percentageText.style("visibility", "visible").text(text);
+    })
+    .on("mouseout", function(d){percentageText.style("visibility", "hidden")})
+    .on("click", function(d) { 
+        //return console.log(this.parentNode.lastChild.innerHTML);
+        var name = this.parentNode.lastChild.innerHTML;
+        var transf = this.parentNode.parentNode.getAttribute('transform');
+        var rotation;
+
+        if(transf.includes("rotate")){
+            rotation = transf.split("rotate")[1];
+            rotation = rotation.split("(")[1];
+            rotation = rotation.split(")")[0];
+        }
+        else{
+            rotation = 0;
+        }
+       
+        let attrs = this.getAttribute('d');
+        //console.log(name);
+        var attributes = attrs.split(",");
+        
+        //return console.log((startAngle + endAngle)/2);
+        var startAngle = parseInt(attributes[0].split("M")[1])
+        var endAngle = parseInt(attributes[1])
+        
+/*
+        // The amount we need to rotate:
+        var rotate = 180 - (startAngle + 90)/2 / Math.PI * 180;
+        var endAngle;
+        pieData.forEach(element => {
+              if(name === element['rank']){
+                endAngle = 90 - startAngle+Math.PI*element['percentage']/100;
+                RotateThis(endAngle)
+              }
+            });
+*/
+            
+          pieData.forEach(element => {
+            if(name === element['rank']){
+              rankText.text(element['text']);
+            }
+          });
+        // Transition the pie chart
+        if(name === "Bronze")
+        {
+            RotateThis(60)         
+            deleteChart()
+            ChangeChart(bronzeData);   
+        }
+        else if(name === "Silver")
+        {
+            RotateThis(350)
+            deleteChart()
+            ChangeChart(silverData);
+        }
+        else if(name === "Gold")
+        {
+            RotateThis(290)
+            deleteChart()
+            ChangeChart(goldData);
+        }
+        else if(name === "Platinum")
+        {
+            RotateThis(210)
+            deleteChart()
+            ChangeChart(platinumData);
+        }
+        else if(name === "Diamond")
+        {
+            RotateThis(137)
+            deleteChart()
+            ChangeChart(diamondData);
+        }
+        else if(name === "Master")
+        {
+            RotateThis(98)
+            deleteChart()
+        }
+        else if(name === "Predator")
+        {
+            RotateThis(92)
+            deleteChart()
+        }        
+    });    
+
+    var text = arc.append("text")
+      .attr("transform", function(d) { return "translate(" + label.centroid(d) + ") rotate(" + (-60) +  ")"; })
+      .attr("dy", "0.35em")
+      .text(function(d) { return d.data.rank; });
+
+    function RotateThis(rotate){
+            g.transition()
+            .attr("transform",  "translate(" + width / 1.7 + "," + height / 1.58 + ") rotate(" + rotate + ")")
+            .duration(1000);
+
+            // Τransition the labels:
+            text.transition()
+            .attr("transform", function(dd) {
+            return "translate(" + label.centroid(dd) + ") rotate(" + (-rotate) + ")"; })
+            .duration(1000);
+    }
+
+
+//divisions pie chart code
+  ChangeChart(bronzeData);
+
+  var divPieSvg = d3.selectAll(".divPie").style("visibility", "visible")
+  function deleteChart(){ divPieSvg.selectAll("g").remove()}
+
+  var div = d3.select(".divPie").append("div")	
+  .attr("class", "tooltipPIE")				
+  .style("opacity", 0);
+
+  function hideChart(){d3.selectAll(".divPieChart").style("visibility", "hidden")}
+
+  function ChangeChart(divPieData){
+    currentDivPieData = divPieData;   
+    divPieSvg = d3.selectAll(".divPieChart").style("visibility", "visible")
+    divPieWidth = +divPieSvg.attr("width"),
+    divPieHeight = +divPieSvg.attr("height"),
+    divPieRadius = Math.min(divPieWidth, divPieHeight) / 2,
+    divG = divPieSvg.append("g").attr("transform", "translate(" + divPieWidth / 2 + "," + divPieHeight / 2 + ") rotate(" + 60 + ")")
+
+    var divPie = d3.pie()
+        .sort(null)
+        .value(function(d) { return d.percentage; });
+
+    var divPath = d3.arc()
+        .outerRadius(divPieRadius - 10)
+        .innerRadius(0);
+
+    var divLabel = d3.arc()
+        .outerRadius(divPieRadius - 40)
+        .innerRadius(divPieRadius - 40);
+
+    var divArc = divG.selectAll(".arc")
+        .data(pie(divPieData))
+        .enter().append("g")
+          .attr("class", "arc");
+
+    divArc.append("path")
+        .attr("d", divPath)
+        .attr("fill", function(d) { return d.data.color; })    
+        .on("mousemove", function(d){  
+            var colors = this.getAttribute('fill');
+            var name = this.parentNode.lastChild.innerHTML;
+            var text;
+            currentDivPieData.forEach(element => {
+              if(name === element['rank']){
+                text = element['percentage']
+              }
+            });
+            console.log(event)
+            div.style("opacity", 1)
+            div.html(text + "%")	
+                  .style("left", event.clientX + 20 + "px")		
+                  .style("top",  event.clientY - 20 + "px");
+          })
+        .on("mouseout", function(d){
+          div.transition()		
+                .duration(50)		
+                .style("opacity", 0);
+        });    
+
+    var divText = divArc.append("text")
+      .attr("transform", function(d) { return "translate(" + divLabel.centroid(d) + ") rotate(" + (-60) +  ")"; })
+      .attr("dy", "0.35em")
+      .text(function(d) { return d.data.rank; });
+}
+
+//bar chart code
+
+  var barData = [{
+    name:"Horizon", 
+    percentage: 17.9,
+    color: "#ba917d",
+    image: "images/horizon.png",
+    text: "Horizon is an Offensive Legend with gravity-based abilities. Her tactical ability Gravity Lift, when deployed on the ground, lifts any player that steps into it into the air. Her passive ability Spacewalk increases her in-air movement speed and decreases her movement delay after falling from a height. Her ultimate ability Black Hole throws a device that causes nearby enemies and grenades to be pulled toward its center."
+  },{
+    name:"Valkyrie", 
+    percentage: 16.1,
+    color: "#d5d3e1",
+    image: "images/valkyrie.png",
+    text:"Valkyrie is a Recon Legend who specializes in flight. Her passive VTOL Jets allow her to fly for a few seconds, and she automatically marks enemies while skydiving. Her tactical, Missile Swarm, launches a group of missiles that damage and stun enemies. Her ultimate, Skyward Dive, launches Valkyrie and her teammates into the sky to skydive towards the ground."
+  },{
+    name:"Wraith", 
+    percentage: 14.5,
+    color: "#fad699",
+    image: "images/wraith.png",
+    text:"A versatile Legend, Wraith can reposition and flank enemies with her abilities. Wraith's tactical ability Into the Void allows her to reposition or take cover while being invincible for 4 seconds. Wraith's ultimate ability Dimensional Rift places an entrance and exit portal that allows her squad to be safely transported over long distances. Her passive ability Voices from the Void gives her and her teammates audible warnings about enemies aiming at them."
+  },{
+    name:"Pathfinder", 
+    percentage: 9.8,
+    color: "#6cfbfc",
+    image: "images/pathfinder.png",
+    text:"Pathfinder is a Recon Legend. In Apex Legends, he is unlocked by default. In Apex Legends Mobile, he is unlocked by leveling up to level 4. Pathfinder is a Legend very useful on movement and rotation. His Grappling Hook ability allows you to reach higher places and to tactically reposition while his Insider Knowledge and Zipline Gun abilities allow him to support your squad by letting them know the position of the next ring and provide a zipline on-the-fly to allow quick escapes and to reposition respectively."
+  },{
+    name:"Bloodhound", 
+    percentage: 8.8,
+    color: "#2ab1ec",
+    image: "images/bloodhound.png",
+    text:"Bloodhound is a Recon Legend. They are unlocked by default in both Apex Legends and Apex Legends Mobile. Bloodhound is a fast-paced Legend great at pushing the enemy in their base. Their Tracker can be used to find where enemies have gone, and Eye of the Allfather will reveal hidden enemies and traps. Lastly, Beast of the Hunt causes Bloodhound to gain speed and highlights their enemies."
+  },{
+    name:"Gibraltar", 
+    percentage: 6,
+    color: "#c97df2",
+    image: "images/gibraltar.png",
+    text:"Gibraltar is a Defensive Legend. In Apex Legends, he is unlocked by default. In Apex Legends Mobile, he is unlocked by leveling up to level 6. Gibraltar is a mountainous Legend. His tactical ability Dome of Protection creates a temporary half-dome shield that can be walked through, but not fired through. His passive ability Gun Shield causes a shield to form around the upper half of his body whenever he aims down sights; this shield takes some damage before breaking. His ultimate ability Defensive Bombardment causes a damaging and stunning cluster strike to land on a targeted location."
+  }];
+
+  var barImg;
+  var tip = d3.select(".chart-container")
+	.append("div")
+  .attr("class", "tip")
+	.style("position", "absolute")
+	.style("z-index", "10")
+	.style("visibility", "hidden");
+
+  var barSvg = d3.selectAll(".barChart").append("svg")
+        .attr("width", 460)
+        .attr("height", 320);
+      margin = {top: 20, right: 20, bottom: 42, left: 40},
+      width = +barSvg.attr("width") - margin.left - margin.right,
+      height = +barSvg.attr("height") - margin.top - margin.bottom;
+
+  var x = d3.scaleBand().rangeRound([0, width]).padding(0.2),
+      y = d3.scaleLinear().rangeRound([height, 0]);
+
+  var barG = barSvg.append("g")
+      .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+  x.domain(barData.map(function(d) { return d.name; }));
+  y.domain([0, 35]);
+
+  barG.append("g")
+      .attr("class", "axis axis--x")
+      .attr("transform", "translate(0," + height + ")")
+      .call(d3.axisBottom(x))
+  .append("text")
+      .attr("y", 6)
+      .attr("dy", "2.5em")
+      .attr("dx", width/2 - margin.left)
+      .attr("text-anchor", "start")
+      .text("Character");
+
+  barG.append("g")
+      .attr("class", "axis axis--y")
+      .call(d3.axisLeft(y).ticks(5))
+      .append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("y", 6)
+      .attr("dy", "-3em")
+      .attr("text-anchor", "end")
+      .text("Usage [%]");
+
+  barG.selectAll(".bar")
+    .data(barData)
+    .enter().append("rect")        
+      .attr("class", "bar")
+      .attr("x", function(d) { return x(d.name); })
+      .attr("y", function(d) { return y(d.percentage); })
+      .attr("width", x.bandwidth())
+      .attr("height", function(d) { return height - y(d.percentage)})
+      .attr("fill", function(d) { return d.color; })
+
+  var bars = document.getElementsByClassName('bar');
+
+  for (var i = 0; i < bars.length; i++) {
+    bars[i].addEventListener('mouseover', onMouseOver)
+    bars[i].addEventListener('mouseout', onMouseOut)
+  } 
+
+  var charText = d3.select('.charText')
+
+  function onMouseOut(event){ 
+    tip.style("visibility", "hidden")
+    barImg.style("visibility", "hidden");
+    charText.style("visibility", "hidden");
+  }
+
+  function onMouseOver(event){      
+    var percentage = (((258-event.target.y.baseVal.value)/258)*35).toFixed(1);
+    var rank = (event.target.x.baseVal.value) + 12 + 56/2;
+    var rankNumber = Math.floor((event.target.x.baseVal.value)/56);
+
+    var imageName;
+    charText.style("visibility", "visible");
+
+    var i = 0;
+    barData.forEach(element => {
+      if(rankNumber == i){
+        imageName = element['image'];
+        charText.text(element['text']);
+      }
+      i++;
+    });
+
+    
+    tip.style("visibility", "visible")
+        .text(percentage + "%")
+        .style("top", (y(percentage) - 13) + "px")
+        .style("left", (rank) + "px");
+
+    imageAdd(imageName, event.target.x.baseVal.value + 15, event.target.y.baseVal.value - 115)
+  }
+
+  function imageAdd(imageName, x, y){
+    barImg = barSvg.append('image')
+    .attr('xlink:href', imageName)
+    .attr('width', 100)
+    .attr('height', 100)
+    .attr('x', x)
+    .attr('y', y);
+  }
+</script>
