@@ -1,0 +1,40 @@
+h1 {
+    text-align:center;
+}
+
+html{
+    background: #b3b3b3;;
+}
+
+.container-fluid{
+    font: 20px "Paytone One";
+    background: #b3b3b3;
+   
+}
+
+.row2{
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+
+body{
+    background: #e8e4df;    
+    
+}
+
+.chart-container{
+    margin-top: 20px;
+    margin-left: 20px;
+}
+
+.title{   
+    height: 100px;
+    color: white;
+    background-image: url("../images/bg.jpg");
+    text-align: center;
+}
+
+.divPieChart{
+    margin-left: 200px;
+}
