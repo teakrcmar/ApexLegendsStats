@@ -6,7 +6,7 @@ function popCharacter(character) {
   popOutWindow.style.display = 'block';
 
   // Fetch the JSON data
-  fetch('https://raw.githubusercontent.com/teakrcmar/VP_projekt/main/legends.json')
+  fetch('https://raw.githubusercontent.com/teakrcmar/ApexLegendsStats/main/legends.json')
     .then(response => response.json())
     .then(data => {
       // Find the legend object in the JSON data
